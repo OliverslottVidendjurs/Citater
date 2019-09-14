@@ -35,7 +35,9 @@ class Citater extends React.Component {
             content: "There are only two kinds of programming languages: those people always bitch about and those nobody uses. ",
             author: "Bjarne Stroustrup"
         }
-        ]
+        ],
+        isEditing: false,
+        editingCitat: null
     };
 
     deleteCitat = (id) => {
@@ -48,16 +50,33 @@ class Citater extends React.Component {
     }
 
     addCitat = (citat) => {
-        citat.id = Math.random();
         this.setState({
             citater: [...this.state.citater, citat]
+        });
+    }
+
+    startEditing = (id) => {
+        var citat = this.state.citater.find(x=> x.id === id);
+        this.setState({
+            isEditing: true, //Might not be needed anymore
+            editingCitat: citat
+        });
+    }
+
+    editCitat = (citat) => {
+        var citater = this.state.citater;
+        var index = citater.findIndex(x=> x.id === citat.id);
+        citater[index] = citat;
+        this.setState({
+            citater,
+            editingCitat: null
         });
     }
 
     render() {
         const citatList = this.state.citater.length ? (
             this.state.citater.map(citat => {
-                return <Citat key={citat.id} citat={citat} deleteCitat={this.deleteCitat} />
+                return <Citat key={citat.id} citat={citat} deleteCitat={this.deleteCitat} startEditing={this.startEditing} />
             })
         ) : (
                 <p>Ingen citater fundet</p>
@@ -65,7 +84,7 @@ class Citater extends React.Component {
         return (
             <div className="row">
                 <div className="col s12 m6">
-                    <AddCitat addCitat={this.addCitat} />
+                    <AddCitat editingCitat={this.state.editingCitat} editCitat={this.editCitat} addCitat={this.addCitat} />
                 </div>
                 <div className="col s12 m6">
                     {citatList}
